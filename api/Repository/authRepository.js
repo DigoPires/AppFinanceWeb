@@ -22,7 +22,7 @@ export async function loginValidationRepository(email, password){
          const { password: _, ...userSafe } = user;
          return { 
             success: true,
-            user: userSafe
+            user: userSafe 
         };
 
     } catch (error) {
