@@ -1,17 +1,17 @@
 import "../../global.scss";
 import "./index.scss";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 function Login() {
     const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
+    const [password, setPassword] = useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        if (!email || !senha) {
+        if (!email || !password) {
             toast.error('Por favor, preencha todos os campos', {
                 position: "top-right",
                 autoClose: 3000
@@ -27,10 +27,23 @@ function Login() {
             return;
         }
 
-        try{
-            console.log(' Iniciando processo de login... ')
+        try {
+            const response = await fetch("/api/loginUser", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            })
 
-        } catch ( error ){
+            const data = await response.json();
+
+            console.log("Usuário Logado fi:", data);
+
+        } catch (error) {
             console.error(console.error('Erro na validação de Login (Página):', error))
         }
     }
@@ -71,12 +84,12 @@ function Login() {
                         <h2>Login</h2>
 
                         <div className="input-group">
-                            <label htmlFor="email">Email</label>
-                            <input type="email" id="email" placeholder="Digite seu email" />
+                            <label htmlFor="email" >Email</label>
+                            <input value={email} onChange={e => setEmail(e.target.value)} type="email" id="email" placeholder="Digite seu email" />
                         </div>
                         <div className="input-group">
-                            <label htmlFor="password">Senha</label>
-                            <input type="password" id="password" placeholder="Digite sua senha" />
+                            <label htmlFor="password">password</label>
+                            <input value={password} onChange={e => setPassword(e.target.value)} type="password" id="password" placeholder="Digite sua password" />
                         </div>
 
                         <div className="checkbox">
@@ -85,7 +98,7 @@ function Login() {
                         </div>
 
                         <div className="enter-button">
-                            <button>Entrar</button>
+                            <button onClick={handleLogin}>Entrar</button>
                         </div>
 
                     </div>

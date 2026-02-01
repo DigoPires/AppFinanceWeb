@@ -7,10 +7,11 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.13.4",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
-    "express": "^5.2.1",
+    "express": "^4.22.1",
     "pg": "^8.17.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
@@ -20,14 +21,15 @@
     "sass": "^1.97.3",
     "web-vitals": "^2.1.4"
   },
+  "type": "module",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "dev": "nodemon server.js",
+    "dev": "nodemon api/server.js",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "full": "concurrently \"npm start\" \"npm run dev\""
   },
-  "type": "module",
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -47,6 +49,7 @@
     ]
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "nodemon": "^3.1.11"
   }
 }

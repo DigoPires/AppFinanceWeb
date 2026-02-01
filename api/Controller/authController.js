@@ -1,7 +1,6 @@
 import * as authRepository from '../Repository/authRepository.js';
 
-export async function loginValidationController(req, res) {
-    console.log('ROTA CHEGOU!', req.body);
+export default async function loginValidationController(req, res) {
     try{
         const {email, password} = req.body;
 
@@ -18,8 +17,9 @@ export async function loginValidationController(req, res) {
         }
 
         res.status(201).json({
-            message: 'Login validado com sucesso',
-        })
+            message: 'Login validado com sucesso', 
+            user: result.user
+        });
 
     } catch ( error ) {
         console.error('Erro na validação de Login (Controller):', error)

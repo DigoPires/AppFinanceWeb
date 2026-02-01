@@ -10,13 +10,20 @@ export async function loginValidationRepository(email, password){
         `;
         const value = [email];
         const result = await pool.query(query, value);
+        const user = result.rows[0]
 
-        if (!result.rows[0]) return {error: 'Usuário não existe'};
+        if (!user) return {error: 'Usuário não existe'};
 
-        const validation = await bcrypt.compare(password, result.rows[0].password);
-        if(!validation) return {error: 'Senha incorreta'};
+        const validation = await bcrypt.compare(password, user.password);
+
+        if(!validation) 
+            return { error: 'Senha incorreta' };
         
-        return {success: true}
+         const { password: _, ...userSafe } = user;
+         return { 
+            success: true,
+            user: userSafe 
+        };
 
     } catch (error) {
         console.error('Erro na validação de Login (Repository):', error);

@@ -1,22 +1,30 @@
 import express from 'express';
 import cors from 'cors';
 import "dotenv/config"
-import router from "./routes.js"
+import router from "./routes.js";
 
 const server = express();
 
 server.use(cors());
 
 server.use(express.json());
-server.use(express.urlencoded({ extended: true }));
-
 
 server.use("/api", router);
 
-const PORT = process.env.PORT;
-server._router.stack.forEach(function(r){
-  if (r.route && r.route.path){
-    console.log(`Rota registrada: ${Object.keys(r.route.methods)} ${r.route.path}`)
-  }
-})
-server.listen(PORT, () => console.log(`Servidor Rodando na porta ${PORT} `));
+
+server.post("/loginUser", (req, res) => { 
+    res.send("Login online")
+});
+
+// servir frontend
+server.use(express.static("build"));
+
+server.get("*", (req, res) => {
+  res.sendFile(path.resolve("build", "index.js"))
+});
+
+const PORT = process.env.PORT || 5000;
+
+server.listen(PORT, () => {
+  console.log(`Servidor rodando na ${PORT}`);
+});
