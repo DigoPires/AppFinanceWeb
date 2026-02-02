@@ -5,7 +5,8 @@
 /.pnp
 .pnp.js
 
-# routes
+# db
+/create_db
 
 # testing
 /coverage

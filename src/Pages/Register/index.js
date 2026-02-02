@@ -4,14 +4,15 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { remoteLog } from '../../utils/remoteLog.js'
 
-function Login() {
+function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [name, setName] = useState('');
 
-    const handleLogin = async (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
 
-        if (!email || !password) {
+        if (!email || !password || !name) {
             toast.error('Por favor, preencha todos os campos', {
                 position: "top-right",
                 autoClose: 3000
@@ -28,38 +29,43 @@ function Login() {
         }
 
         try {
-            const response = await fetch("/api/login", {
+            const response = await fetch("/api/register", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     email: email,
-                    password: password
+                    password: password,
+                    name: name
                 })
             })
 
             const data = await response.json();
 
-            if (data.message === "Login validado com sucesso"){
-                alert(`Login validado com sucesso. Bem vindo, ${data.user.name}`);
-                remoteLog("info", "Usuário Logado no Front", data);
+            if (data && !data.error) {
+                const userName = data.user?.name || "Novo Usuário";
+
+                alert(`Usuário cadastrado com sucesso. Bem vindo, ${userName}`);
+                remoteLog("info", data.message, data);
             }
             else {
-                alert(`Login inválido: ${data.error}`)
-                remoteLog("warn", "Tentativa de login inválida", data);
+                const errorMessage = data?.error || "Erro desconhecido";
+
+                alert(`Erro ao realizar o cadastro: ${errorMessage}`);
+                remoteLog("warn", data?.error, data);
             }
 
         } catch (error) {
-            remoteLog("warn", "Tentativa de login inválida", error);
+            remoteLog("warn", "Erro ao realizar o cadastrado", error);
         }
     }
 
     return (
-        <main className="login">
+        <main className="register">
             <section className="side" id="left-side">
+                <h1> TELA REGISTRO </h1>
                 <div className="flex-container">
-                    <h1> TELA LOGIN </h1>
                     <div className="image">
                         IMAGEM
                     </div>
@@ -89,7 +95,7 @@ function Login() {
             <section className="side" id="right-side">
                 <div className="form-container">
                     <div className="form">
-                        <h2>Login</h2>
+                        <h2>Cadastro</h2>
 
                         <div className="input-group">
                             <label htmlFor="email" >Email</label>
@@ -97,16 +103,15 @@ function Login() {
                         </div>
                         <div className="input-group">
                             <label htmlFor="password">Senha</label>
-                            <input value={password} onChange={e => setPassword(e.target.value)} type="password" id="password" placeholder="Digite sua password" />
+                            <input value={password} onChange={e => setPassword(e.target.value)} type="password" id="password" placeholder="Digite sua senha" />
                         </div>
-
-                        <div className="checkbox">
-                            <input type="checkbox" />
-                            <label htmlFor="remember-me">Manter conectado por 30 dias</label>
+                        <div className="input-group">
+                            <label htmlFor="name">Nome</label>
+                            <input value={name} onChange={e => setName(e.target.value)} type="name" id="name" placeholder="Digite seu nome" />
                         </div>
 
                         <div className="enter-button">
-                            <button onClick={handleLogin}>Entrar</button>
+                            <button onClick={handleRegister}>Cadastrar</button>
                         </div>
 
                     </div>
@@ -116,4 +121,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default Register;
