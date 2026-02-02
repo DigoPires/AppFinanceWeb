@@ -25,7 +25,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "dev": "nodemon api/server.js",
+    "dev": "nodemon --no-warnings api/server.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "full": "concurrently \"npm start\" \"npm run dev\""
