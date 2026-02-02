@@ -1,6 +1,7 @@
 import * as authRepository from '../Repository/authRepository.js';
+import logger from '../../src/config/logger.js';
 
-export default async function loginValidationController(req, res) {
+export async function loginValidationController(req, res) {
     try{
         const {email, password} = req.body;
 
@@ -13,7 +14,9 @@ export default async function loginValidationController(req, res) {
         const result = await authRepository.loginValidationRepository(email, password);
 
         if (result.error) {
-            return res.status(401).json({ error: result.error });
+            return res.status(401).json({ 
+                error: result.error 
+            });
         }
 
         res.status(201).json({
@@ -22,7 +25,34 @@ export default async function loginValidationController(req, res) {
         });
 
     } catch ( error ) {
-        console.error('Erro na validação de Login (Controller):', error)
+        res.status(500).json({ error: error.message });
+    }
+}
+
+export async function registerUserController(req, res) {
+    try{
+        const {email, password, name} = req.body;
+
+        if(!email || !password || !name){
+            return res.status(400).json({
+                error: 'Campo obrigatório vazio'
+            });
+        }
+
+        const result = await authRepository.registerUserRepository(email, password, name);
+
+        if (result.error) {
+            return res.status(401).json({ 
+                error: result.error 
+            });
+        }
+
+        res.status(201).json({
+            message: 'Usuário cadastrado com sucesso', 
+            user: result.user
+        });
+
+    } catch ( error ) {
         res.status(500).json({ error: error.message });
     }
 }
