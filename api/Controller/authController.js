@@ -1,5 +1,44 @@
-import * as authRepository from '../Repository/authRepository.js';
+import * as authServices from '../Services/authServices.js';
 import logger from '../../src/config/logger.js';
+
+export function requestCodeController(req, res){
+    try {
+        const { email } = req.body;
+
+        const result = authServices.generateValidationServices(email);
+
+        if (result.error) return res.status(500).json({ error: result.error });
+
+        return res.status(200).json({
+            message: "Código enviado com sucesso!",
+            tokenValidator: result.tokenValidator
+        })
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao gerar código." });
+    }
+};
+
+export function validationCodeController(req, res) {
+    const { typedCode, tokenValidator } = req.body;
+
+    const isValid = authServices.verifyCodeServices(typedCode, tokenValidator);
+
+    if (isValid) {
+        return res.json({ success: true, message: "Acesso liberado!" });
+    }
+    return res.status(401).json({ success: false, message: "Código inválido ou expirado." });
+};
+
+export async function verifyUserExists(req, res) {
+    const { email } = req.body;
+
+    const exists = await authServices.userExists(email);
+
+    if (!exists) {
+        return res.json({ success: true, message: "Usuário não existe" });
+    }
+    return res.status(401).json({ success: false, message: "Usuário já existe" });
+};
 
 export async function loginValidationController(req, res) {
     try{
@@ -11,7 +50,7 @@ export async function loginValidationController(req, res) {
             });
         }
 
-        const result = await authRepository.loginValidationRepository(email, password);
+        const result = await authServices.loginValidationServices(email, password);
 
         if (result.error) {
             return res.status(401).json({ 
@@ -27,7 +66,7 @@ export async function loginValidationController(req, res) {
     } catch ( error ) {
         res.status(500).json({ error: error.message });
     }
-}
+};
 
 export async function registerUserController(req, res) {
     try{
@@ -39,7 +78,7 @@ export async function registerUserController(req, res) {
             });
         }
 
-        const result = await authRepository.registerUserRepository(email, password, name);
+        const result = await authServices.registerUserServices(email, password, name);
 
         if (result.error) {
             return res.status(401).json({ 
@@ -55,4 +94,4 @@ export async function registerUserController(req, res) {
     } catch ( error ) {
         res.status(500).json({ error: error.message });
     }
-}
+};

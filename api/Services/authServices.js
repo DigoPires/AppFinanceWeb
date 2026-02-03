@@ -1,8 +1,34 @@
 import pool from '../connection.js';
 import bcrypt from 'bcrypt';
 import logger from '../../src/config/logger.js';
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import * as email_sender from '../../src/utils/email.js'
 
-async function userExists(email) {
+const SECRET_KEY = process.env.SECRET_KEY_VALIDATION;
+
+export function generateValidationServices(email) {
+    const code = crypto.randomInt(100000, 999999).toString();
+    const tokenValidator = jwt.sign({code,email}, SECRET_KEY, {expiresIn: "10m"} );
+
+    const result = email_sender.validationCode(email, code)
+
+    if(!result) return { error: "Erro ao enviar o codígo para o e-mail" };
+
+    return {code, tokenValidator}
+};
+
+export function verifyCodeServices(typedCode, tokenReceived) {
+    try {
+        const decoder = jwt.verify(tokenReceived, SECRET_KEY);
+        return decoder.code === typedCode; 
+    } catch (error) {
+        logger.error("Erro interno no verifyCodeServices", error);
+        return false
+    }
+};
+
+export async function userExists(email) {
     try {
         const query = `
             SELECT * FROM users WHERE email = $1
@@ -15,9 +41,9 @@ async function userExists(email) {
         logger.error("Erro interno no userExists", error);
         throw error;
     }
-}
+};
 
-export async function loginValidationRepository(email, password) {
+export async function loginValidationServices(email, password) {
     try {
 
         const user = await userExists(email);
@@ -41,13 +67,10 @@ export async function loginValidationRepository(email, password) {
         });
         throw error;
     }
-}
+};
 
-export async function registerUserRepository(email, password, name) {
+export async function registerUserServices(email, password, name) {
     try {
-        const user = await userExists(email);
-
-        if (user) return { error: "Já existe um usuário com este email" };
 
         const password_encrypt = await bcrypt.hash(password, 10)
 
@@ -75,4 +98,4 @@ export async function registerUserRepository(email, password, name) {
         });
         throw error;
     }
-}
+};
