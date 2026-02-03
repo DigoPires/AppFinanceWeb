@@ -48,7 +48,7 @@ export async function registerUserController(req, res) {
         }
 
         res.status(201).json({
-            message: 'Usuário cadastrado com sucesso', 
+            message: 'Usuário cadastrado com sucesso!', 
             user: result.user
         });
 

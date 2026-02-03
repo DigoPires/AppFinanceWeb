@@ -12,18 +12,12 @@ function Login() {
         e.preventDefault();
 
         if (!email || !password) {
-            toast.error('Por favor, preencha todos os campos', {
-                position: "top-right",
-                autoClose: 3000
-            });
+            alert('Por favor, preencha todos os campos');
             return;
         }
 
         if (!/\S+@\S+\.\S+/.test(email)) {
-            toast.error('Por favor, insira um email válido', {
-                position: "top-right",
-                autoClose: 3000
-            });
+            alert('Por favor, insira um email válido');
             return;
         }
 
@@ -41,17 +35,21 @@ function Login() {
 
             const data = await response.json();
 
-            if (data.message === "Login validado com sucesso"){
-                alert(`Login validado com sucesso. Bem vindo, ${data.user.name}`);
-                remoteLog("info", "Usuário Logado no Front", data);
+            if (data && !data.error){
+                const userName = data.user?.name
+
+                alert(`Login validado com sucesso. Bem vindo, ${userName}`);
+                remoteLog("info", "Usuário Logado no Front", userName);
             }
             else {
-                alert(`Login inválido: ${data.error}`)
-                remoteLog("warn", "Tentativa de login inválida", data);
+                const errorMessage = data?.error || "Erro desconhecido";
+                
+                alert(`Login inválido: ${errorMessage}`)
+                remoteLog("error", "Tentativa de login inválida", errorMessage);
             }
 
         } catch (error) {
-            remoteLog("warn", "Tentativa de login inválida", error);
+            remoteLog("error", "Tentativa de login inválida", error);
         }
     }
 

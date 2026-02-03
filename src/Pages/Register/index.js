@@ -46,18 +46,18 @@ function Register() {
             if (data && !data.error) {
                 const userName = data.user?.name || "Novo Usuário";
 
-                alert(`Usuário cadastrado com sucesso. Bem vindo, ${userName}`);
+                alert(`Usuário cadastrado com sucesso! Bem vindo, ${userName}`);
                 remoteLog("info", data.message, data);
             }
             else {
                 const errorMessage = data?.error || "Erro desconhecido";
 
                 alert(`Erro ao realizar o cadastro: ${errorMessage}`);
-                remoteLog("warn", data?.error, data);
+                remoteLog("error", data?.error, data);
             }
 
         } catch (error) {
-            remoteLog("warn", "Erro ao realizar o cadastrado", error);
+            remoteLog("error", "Erro ao realizar o cadastrado", error);
         }
     }
 

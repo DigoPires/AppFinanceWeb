@@ -1,8 +1,13 @@
 import express from 'express';
 import cors from 'cors';
-import "dotenv/config"
+import "dotenv/config";
+import path from 'path';
+import { fileURLToPath } from 'url';
 import router from "./routes.js";
-import logger from '../src/config/logger.js'
+import logger from '../src/config/logger.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const server = express();
 
@@ -21,7 +26,11 @@ server.post("/api/logs", (req, res) => {
 });
 
 // servir frontend
-server.use(express.static("build"));
+server.use(express.static(path.join(__dirname, '..', 'build')));
+
+server.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
+});
 
 const PORT = process.env.PORT || 5000;
 
