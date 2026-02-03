@@ -6,20 +6,27 @@ const logger = winston.createLogger({
     winston.format.colorize(),
     winston.format.timestamp({ format: 'h:mm:ss A' }),
     winston.format.printf(({ level, message, timestamp, ...metadata }) => {
-      // 1. Criamos o objeto de serviço padrão
-      const serviceInfo = {
-        service: "AppFinance",
-        timestamp: new Date().toISOString()
-      };
+      
+      const cleanMetadata = { ...metadata };
+      delete cleanMetadata[Symbol.for('level')];
+      delete cleanMetadata[Symbol.for('message')];
+      delete cleanMetadata[Symbol.for('splat')];
 
-      // 2. Verificamos se existem dados extras (como o seu 'data' do usuário)
-      // Se houver, transformamos em string para exibir
-      const extraData = Object.keys(metadata).length 
-        ? ` | Data: ${JSON.stringify(metadata)}` 
-        : '';
+      // Reconstruir a string original ou exibir o objeto limpo.
+      let displayData = "";
+      const keys = Object.keys(cleanMetadata);
+      
+      if (keys.length > 0) {
+        // Checa se é aquele formato chato de string fatiada
+        const isSlicedString = keys.every(key => !isNaN(key));
+        if (isSlicedString) {
+          displayData = ` | Data: ${Object.values(cleanMetadata).join('')}`;
+        } else {
+          displayData = ` | Data: ${JSON.stringify(cleanMetadata)}`;
+        }
+      }
 
-      // 3. Retornamos a linha completa
-      return `${level}: ${timestamp} [express] ${message}${extraData}`;
+      return `${level}: ${timestamp} [express] ${message}${displayData}`;
     })
   ),
   transports: [new winston.transports.Console()],
