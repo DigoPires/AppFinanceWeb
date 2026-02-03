@@ -59,12 +59,13 @@ export async function registerUserRepository(email, password, name) {
         const result = await pool.query(query, values);
         
         const newUser = await userExists(email);
+        const { password: _, ...userSafe } = newUser;
 
-        logger.info(`Usuário cadastrado com sucesso no banco: ${newUser.name} | ${newUser.email}`);
+        logger.info(`Usuário cadastrado com sucesso no banco: ${JSON.stringify(userSafe)}`);
 
         return {
             success: true,
-            user: newUser
+            user: userSafe
         }
 
     } catch (error) {
