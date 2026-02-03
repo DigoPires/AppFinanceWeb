@@ -1,7 +1,6 @@
 import "../../global.scss";
 import "./index.scss";
 import { useState } from 'react';
-import { toast } from 'react-toastify';
 import { remoteLog } from '../../utils/remoteLog.js'
 
 function Login() {
