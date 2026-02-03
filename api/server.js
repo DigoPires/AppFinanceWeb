@@ -14,8 +14,9 @@ server.use("/api", router);
 
 server.post("/api/logs", (req, res) => {
     const { level, message, data } = req.body;
-    // Aqui o Winston do Backend registra o que veio do Frontend
-    logger.log(level || 'info', `[FRONTEND]: ${message}`, data);
+    // Remove apenas a chave 'message' do objeto data para evitar duplicação
+    const { message: _, ...logData } = data || {};
+    logger.log(level || 'info', `[FRONTEND]: ${message}`, logData);
     res.status(204).send();
 });
 
