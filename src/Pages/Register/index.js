@@ -100,6 +100,7 @@ function Register() {
             } else {
                 toast.error(dataValid.message || "Código inválido");
                 remoteLog("error", (dataValid.message || "Código inválido"))
+                alert(dataValid.message || "Código inválido")
             }
         } catch (error) {
             remoteLog("error", "Erro na validação do código", error);
